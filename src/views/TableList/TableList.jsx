@@ -2,15 +2,10 @@ import React from "react";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Grid from "@material-ui/core/Grid";
-import InputLabel from "@material-ui/core/InputLabel";
 import TextField from '@material-ui/core/TextField';
-import Avatar from '@material-ui/core/Avatar';
-import Chip from '@material-ui/core/Chip';
-import Paper from '@material-ui/core/Paper';
-import TagFacesIcon from '@material-ui/icons/TagFaces';
+import DatePicker from 'material-ui/DatePicker';
+import Toggle from 'material-ui/Toggle';
 
-//Ant design
-import { Input, Icon } from 'antd';
 
 // core components
 import GridItem from "components/Grid/GridItem.jsx";
@@ -20,10 +15,12 @@ import Table from "components/Table/Table.jsx";
 import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import CardBody from "components/Card/CardBody.jsx";
-import CardAvatar from "components/Card/CardAvatar.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
-import avatar from "assets/img/faces/marc.jpg";
+const optionsStyle = {
+  maxWidth: 255,
+  marginRight: 'auto',
+};
 
 const styles = {
   cardCategoryWhite: {
@@ -74,12 +71,17 @@ class TableList extends React.Component {
 
   constructor(props){
     super(props)
+
       this.state = {
         userName: '',
         name: 'Cat in the Hat',
         age: '',
         multiline: 'Controlled',
         status: 'All',
+        minDate: minDate,
+        maxDate: maxDate,
+        autoOk: false,
+        disableYearSelection: false,
         chipData: [
           { key: 0, label: 'Angular' },
           { key: 1, label: 'jQuery' },
@@ -88,13 +90,19 @@ class TableList extends React.Component {
           { key: 4, label: 'Vue.js' },
         ],
       };
+   const minDate = new Date();
+   const maxDate = new Date();
+   minDate.setFullYear(minDate.getFullYear() - 1);
+   minDate.setHours(0, 0, 0, 0);
+   maxDate.setFullYear(maxDate.getFullYear() + 1);
+   maxDate.setHours(0, 0, 0, 0);
+
   }
 
   emitEmpty = () => {
     this.userNameInput.focus();
     this.setState({ userName: '' });
   }
-
   onChangeUserName = (e) => {
     this.setState({ userName: e.target.value });
   }
@@ -105,6 +113,25 @@ class TableList extends React.Component {
     return;
   }
 
+  this.handleChangeMinDate = (event, date) => {
+    this.setState({
+      minDate: date,
+    });
+  };
+
+  this.handleChangeMaxDate = (event, date) => {
+    this.setState({
+      maxDate: date,
+    });
+  };
+
+  this.handleToggle = (event, toggled) => {
+    this.setState({
+      [event.target.name]: toggled,
+    });
+  };
+
+
   this.setState(state => {
     const chipData = [...state.chipData];
     const chipToDelete = chipData.indexOf(data);
@@ -112,9 +139,9 @@ class TableList extends React.Component {
     return { chipData };
   });
   };
+
   render() {
-    const { classes } = this.props;
-    const suffix = this.state.userName ? <Icon type="close-circle" onClick={this.emitEmpty} /> : null;
+  const { classes } = this.props;
   return (
     <div>
     <Grid container>
@@ -179,7 +206,6 @@ class TableList extends React.Component {
                   id="select-currency-native"
                   select
                   label="Channel"
-                  className={classes.textField}
                   SelectProps={{
                     native: true,
                     MenuProps: {
@@ -196,7 +222,7 @@ class TableList extends React.Component {
                   ))}
                 </TextField>
               </GridItem>
-              <GridItem xs={12} sm={12} md={4}>
+              <GridItem xs={12} sm={12} md={2}>
                 <CustomInput
                   labelText="Subscription"
                   id="subscription"
@@ -208,16 +234,22 @@ class TableList extends React.Component {
                   margin="normal"
                 />
               </GridItem>
-              <GridItem xs={12} sm={12} md={4}>
-                <CustomInput
-                  labelText="Subscription"
-                  id="subscription"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                  type="search"
-                  className={classes.textField}
-                  margin="normal"
+              <GridItem xs={12} sm={12} md={2}>
+                <DatePicker
+                  onChange={this.handleChangeMinDate}
+                  autoOk={this.state.autoOk}
+                  floatingLabelText="Min Date"
+                  defaultDate={this.state.minDate}
+                  disableYearSelection={this.state.disableYearSelection}
+                />
+              </GridItem>
+              <GridItem xs={12} sm={12} md={2}>
+                <DatePicker
+                  onChange={this.handleChangeMaxDate}
+                  autoOk={this.state.autoOk}
+                  floatingLabelText="Max Date"
+                  defaultDate={this.state.maxDate}
+                  disableYearSelection={this.state.disableYearSelection}
                 />
               </GridItem>
             </Grid>
@@ -241,28 +273,26 @@ class TableList extends React.Component {
           <CardBody>
             <Table
               tableHeaderColor="primary"
-              tableHead={["Name", "Country", "City", "Salary"]}
+              tableHead={["Order number", "Descriptipn", "Channel", "Created on", "Created by", "Status"]}
               tableData={[
-                ["Dakota Rice", "Niger", "Oud-Turnhout", "$36,738"],
-                ["Minerva Hooper", "Curaçao", "Sinaai-Waas", "$23,789"],
-                ["Sage Rodriguez", "Netherlands", "Baileux", "$56,142"],
-                ["Philip Chaney", "Korea, South", "Overland Park", "$38,735"],
-                ["Doris Greene", "Malawi", "Feldkirchen in Kärnten", "$63,542"],
-                ["Mason Porter", "Chile", "Gloucester", "$78,615"]
+                ["4992566653", "Niger predulym", "Store", "26-07-2017 00:00","JSMONS","Error"],
+                ["3995561487", "Minerva Hooper", "Store", "26-07-2017 00:00","Sinaai-Waas","Error"],
+                ["5678564561", "Philip Chaney", "Store", "26-07-2017 00:00","Overland Park","Error"],
+                ["3245561454", "Doris Greene", "Store", "26-07-2017 00:00","Feldkirchen","Error"],
+                ["6541258968", "Niger predulym", "Store", "26-07-2017 00:00","Kärnten","Error"],
+                ["7845136987", "Mason Porter", "Store", "26-07-2017 00:00","Gloucester","Error"],
+                ["4992566653", "Niger predulym", "Store", "26-07-2017 00:00","JSMONS","Error"],
+                ["3995561487", "Minerva Hooper", "Store", "26-07-2017 00:00","Sinaai-Waas","Error"],
+                ["5678564561", "Philip Chaney", "Store", "26-07-2017 00:00","Overland Park","Error"],
+                ["3245561454", "Doris Greene", "Store", "26-07-2017 00:00","Feldkirchen","Error"],
+                ["6541258968", "Niger predulym", "Store", "26-07-2017 00:00","Kärnten","Error"],
+                ["7845136987", "Mason Porter", "Store", "26-07-2017 00:00","Gloucester","Error"],
               ]}
             />
           </CardBody>
         </Card>
       </GridItem>
     </Grid>
-    <Input
-       placeholder="Enter your username"
-       prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-       suffix={suffix}
-       value={this.state.userName}
-       onChange={this.onChangeUserName}
-       ref={node => this.userNameInput = node}
-     />
     </div>
   );
 }
